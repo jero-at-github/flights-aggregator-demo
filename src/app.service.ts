@@ -16,10 +16,10 @@ export class AppService {
 
   constructor(private readonly httpService: HttpService) { }
 
-  private mergeResponses(requestResponse: any[]): any[] {
+  private mergeResponses(data: any[]): any[] {
     let mergedResponse: object[] = [];
     
-    for (let response of requestResponse) {
+    for (let response of data) {
       if (response !== null) {
         mergedResponse = mergedResponse.concat(response['flights']);
       }
@@ -34,8 +34,8 @@ export class AppService {
     return `${flight['flight_number']}${departureTs}${arrivalTs}`;    
   }
 
-  private addIdentifiers(flights: any[]): any[] {
-    return flights.map(flight => {
+  private addIdentifiers(data: any[]): any[] {
+    return data.map(flight => {
       flight['slices'] = flight['slices'].map(flight => ({id: this.createId(flight), ...flight}));
       return flight;
     });
@@ -47,8 +47,8 @@ export class AppService {
   //   });
   // }
 
-  private removeNulls(requestResponse: any[]): any[] {
-    return requestResponse.filter(response => response !== null);
+  private removeNulls(data: any[]): any[] {
+    return data.filter(response => response !== null);
   }
 
   async getFlights(): Promise<object> {
@@ -69,18 +69,18 @@ export class AppService {
     return new Promise((resolve, reject) => {     
       forkJoin(requests).
       subscribe({
-        next: requestResponse => { 
+        next: responseData => { 
           // if all requests fail return an error
-          if (requestResponse.every(response => response === null)) {
-            reject("No flight sources available at the moment");
-          } else {
-            let processedResponse: object[] = [];
+          if (responseData.every(response => response === null)) {
+            reject("No flight sources available at the moment.");          
+          } else { // process response data
+            let processedData: object[] = [];
             
-            processedResponse = this.removeNulls(requestResponse);
-            processedResponse = this.mergeResponses(processedResponse);
-            processedResponse = this.addIdentifiers(processedResponse);
+            processedData = this.removeNulls(responseData);
+            processedData = this.mergeResponses(processedData);
+            processedData = this.addIdentifiers(processedData);
 
-            resolve(processedResponse);
+            resolve(processedData);
           }          
         }, 
         error: (error) => reject(error),
