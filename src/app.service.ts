@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { firstValueFrom, catchError, map, forkJoin, Observable, timer, mapTo, of } from 'rxjs';
-import { AxiosError, AxiosResponse } from 'axios';
+import { catchError, map, forkJoin, of } from 'rxjs';
+import { AxiosError } from 'axios';
 
 @Injectable()
 export class AppService {
