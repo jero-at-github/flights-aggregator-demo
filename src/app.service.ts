@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { catchError, map, forkJoin, of, Observable, timer, throwError, mergeMap } from 'rxjs';
 import { AxiosError } from 'axios';
+import { Flight, Flights, Slice } from './flights/flights.interface';
 
 @Injectable()
 export class AppService {
@@ -16,35 +17,35 @@ export class AppService {
 
   constructor(private readonly httpService: HttpService) { }
 
-  private mergeResponses(data: any[]): any[] {
+  private mergeResponses(data: Flights[]): any[] {
     let mergedResponse: object[] = [];
     
     for (let response of data) {
       if (response !== null) {
-        mergedResponse = mergedResponse.concat(response['flights']);
+        mergedResponse = mergedResponse.concat(response.flights);
       }
     }
 
     return mergedResponse;
   }
 
-  private createId(flight: any): string {
-    let departureTs = new Date(flight['departure_date_time_utc']).getTime();    
-    return `${flight['flight_number']}${departureTs}`;    
+  private createId(flight: Slice): string {
+    let departureTs = new Date(flight.departure_date_time_utc).getTime();    
+    return `${flight.flight_number}${departureTs}`;    
   }
 
-  private addIdentifiers(data: any[]): any[] {
+  private addIdentifiers(data: Flight[]): Flight[] {
     return data.map(flight => {
-      flight['slices'] = flight['slices'].map(flight => ({id: this.createId(flight), ...flight}));
+      flight.slices = flight.slices.map(flight => ({id: this.createId(flight), ...flight}));
       return flight;
     });
   }
 
-  private removeDuplicates(data: any[]): any[] {
+  private removeDuplicates(data: Flight[]): Flight[] {
     let composedIds: string[] = [];
     
     return data.filter(flight => { 
-      let composedId: string = `${flight['slices'][0].id}${flight['slices'][1].id}`;
+      let composedId: string = `${flight.slices[0].id}${flight.slices[1].id}`;
       if (!composedIds.includes(composedId)) {
         composedIds.push(composedId);            
         return true;
@@ -54,14 +55,14 @@ export class AppService {
     });    
   }
 
-  private removeNulls(data: any[]): any[] {
+  private removeNulls(data: Flights[]): any[] {
     return data.filter(response => response !== null);
   }
 
   async getFlights(): Promise<any> {
           
     let createRequest = (sourceUrl =>
-      this.httpService.get<any[]>(sourceUrl).
+      this.httpService.get<Flights>(sourceUrl).
         pipe(
           map(response => response.data),
           catchError((error: AxiosError) => {
@@ -71,8 +72,8 @@ export class AppService {
         )
     );
 
-    let requests: Observable<any>[] = this.flightSources.map(source => createRequest(source));
-    let limitTime = timer(1000).pipe(
+    let requests: Observable<Flights>[] = this.flightSources.map(source => createRequest(source));
+    let limitTime: Observable<never> = timer(1000).pipe(
       mergeMap(_ => throwError(() => new Error('Time limit exceeded')))
     );
     // requests.push(limitTime);

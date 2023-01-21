@@ -6,7 +6,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
   
   @Get()
-  async getFlights(): Promise<object> {
+  async getFlights(): Promise<any> {
     
     return this.appService.
       getFlights().      
