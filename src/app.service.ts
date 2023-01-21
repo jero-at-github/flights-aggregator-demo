@@ -22,8 +22,8 @@ export class AppService {
         pipe(
           map(response => response.data),
           catchError((error: AxiosError) => {
-            this.logger.error(error.response.data);            
-            throw 'Flight source not available.';            
+            this.logger.error(error.response.data);                        
+            return of(null);
           }),
         )
     );
