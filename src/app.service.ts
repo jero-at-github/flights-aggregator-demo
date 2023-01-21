@@ -30,6 +30,7 @@ export class AppService {
   }
 
   private createId(flight: Slice): string {
+    // generate an id using the flight number and the departure date
     let departureTs = new Date(flight.departure_date_time_utc).getTime();    
     return `${flight.flight_number}${departureTs}`;    
   }
@@ -45,6 +46,7 @@ export class AppService {
     let composedIds: string[] = [];
     
     return data.filter(flight => { 
+      // create a composed id using both flights of a slice
       let composedId: string = `${flight.slices[0].id}${flight.slices[1].id}`;
       if (!composedIds.includes(composedId)) {
         composedIds.push(composedId);            
@@ -59,8 +61,13 @@ export class AppService {
     return data.filter(response => response !== null);
   }
 
+  /**
+   * Fetch all the flights from the different sources and process the data   
+   * @returns The list of flights to be consumed.
+   */
   async getFlights(): Promise<any> {
           
+    // creates an observable to fetch a http request
     let createRequest = (sourceUrl =>
       this.httpService.get<Flights>(sourceUrl).
         pipe(
@@ -72,12 +79,14 @@ export class AppService {
         )
     );
 
+    // creates and array with all the requests and a time limit observables
     let requests: Observable<Flights>[] = this.flightSources.map(source => createRequest(source));
     let limitTime: Observable<never> = timer(1000).pipe(
       mergeMap(_ => throwError(() => new Error('Time limit exceeded')))
     );
     // requests.push(limitTime);
 
+    // fetch data and process it
     return new Promise((resolve, reject) => {     
       forkJoin(requests).
       subscribe({
@@ -85,7 +94,8 @@ export class AppService {
           // if all requests fail return an error
           if (responseData.every(response => response === null)) {
             reject(new Error("No flight sources available at the moment"));          
-          } else { // process response data
+          } else { 
+            // process response data
             let processedData: any[] = [];
             
             processedData = this.removeNulls(responseData);
