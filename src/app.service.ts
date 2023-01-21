@@ -29,9 +29,8 @@ export class AppService {
   }
 
   private createId(flight: any): string {
-    let departureTs = new Date(flight['departure_date_time_utc']).getTime();
-    let arrivalTs = new Date(flight['arrival_date_time_utc']).getTime();
-    return `${flight['flight_number']}${departureTs}${arrivalTs}`;    
+    let departureTs = new Date(flight['departure_date_time_utc']).getTime();    
+    return `${flight['flight_number']}${departureTs}`;    
   }
 
   private addIdentifiers(data: any[]): any[] {
@@ -41,11 +40,19 @@ export class AppService {
     });
   }
 
-  // private removeDuplicates(requestResponse: any[]): any[] {
-  //   return requestResponse.filter((flight, idx) => { 
-      
-  //   });
-  // }
+  private removeDuplicates(data: any[]): any[] {
+    let composedIds: string[] = [];
+    
+    return data.filter(flight => { 
+      let composedId: string = `${flight['slices'][0].id}${flight['slices'][1].id}`;
+      if (!composedIds.includes(composedId)) {
+        composedIds.push(composedId);            
+        return true;
+      } else {                
+        return false;
+      }
+    });    
+  }
 
   private removeNulls(data: any[]): any[] {
     return data.filter(response => response !== null);
@@ -79,6 +86,7 @@ export class AppService {
             processedData = this.removeNulls(responseData);
             processedData = this.mergeResponses(processedData);
             processedData = this.addIdentifiers(processedData);
+            processedData = this.removeDuplicates(processedData);  
 
             resolve(processedData);
           }          
