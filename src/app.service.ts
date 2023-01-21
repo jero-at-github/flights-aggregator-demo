@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { catchError, map, forkJoin, of, Observable, timer, throwError, mergeMap } from 'rxjs';
+import { catchError, map, forkJoin, of, Observable, timer, throwError, mergeMap, race } from 'rxjs';
 import { AxiosError } from 'axios';
 import { Flight, Flights, Slice } from './flights/flights.interface';
 
@@ -9,6 +9,9 @@ export class AppService {
   
   private readonly logger = new Logger(AppService.name);
   
+  // Time limit for fetching all the flight sources
+  private requestTimeLimit: number = 1000;
+
   // Array for storing the flight sources URLS, add more in case of need
   private flightSources: string[] = [
     'https://coding-challenge.powerus.de/flight/source1', 
@@ -81,14 +84,16 @@ export class AppService {
 
     // creates and array with all the requests and a time limit observables
     let requests: Observable<Flights>[] = this.flightSources.map(source => createRequest(source));
-    let limitTime: Observable<never> = timer(1000).pipe(
+    let limitTime: Observable<never> = timer(this.requestTimeLimit).pipe(
       mergeMap(_ => throwError(() => new Error('Time limit exceeded')))
-    );
-    // requests.push(limitTime);
+    );    
 
     // fetch data and process it
     return new Promise((resolve, reject) => {     
-      forkJoin(requests).
+      race(
+        forkJoin(requests),
+        limitTime
+      ).
       subscribe({
         next: responseData => { 
           // if all requests fail return an error
