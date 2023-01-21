@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { catchError, map, forkJoin, of } from 'rxjs';
+import { catchError, map, forkJoin, of, Observable, timer, throwError, mergeMap } from 'rxjs';
 import { AxiosError } from 'axios';
 
 @Injectable()
@@ -58,10 +58,10 @@ export class AppService {
     return data.filter(response => response !== null);
   }
 
-  async getFlights(): Promise<object> {
+  async getFlights(): Promise<any> {
           
     let createRequest = (sourceUrl =>
-      this.httpService.get<object[]>(sourceUrl).
+      this.httpService.get<any[]>(sourceUrl).
         pipe(
           map(response => response.data),
           catchError((error: AxiosError) => {
@@ -71,7 +71,11 @@ export class AppService {
         )
     );
 
-    let requests = this.flightSources.map(source => createRequest(source));
+    let requests: Observable<any>[] = this.flightSources.map(source => createRequest(source));
+    let limitTime = timer(1000).pipe(
+      mergeMap(_ => throwError(() => new Error('Time limit exceeded')))
+    );
+    // requests.push(limitTime);
 
     return new Promise((resolve, reject) => {     
       forkJoin(requests).
@@ -79,9 +83,9 @@ export class AppService {
         next: responseData => { 
           // if all requests fail return an error
           if (responseData.every(response => response === null)) {
-            reject("No flight sources available at the moment.");          
+            reject(new Error("No flight sources available at the moment"));          
           } else { // process response data
-            let processedData: object[] = [];
+            let processedData: any[] = [];
             
             processedData = this.removeNulls(responseData);
             processedData = this.mergeResponses(processedData);

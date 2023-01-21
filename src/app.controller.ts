@@ -11,7 +11,7 @@ export class AppController {
     return this.appService.
       getFlights().      
       catch((error) => {        
-        throw new InternalServerErrorException(error);
+        throw new InternalServerErrorException(error.message);
       });      
   }
 }
