@@ -1,4 +1,4 @@
-import { Controller, Get, InternalServerErrorException, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, InternalServerErrorException } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -8,8 +8,10 @@ export class AppController {
   @Get()
   async getFlights(): Promise<object> {
     
-    return this.appService.getFlights().catch((error) => {
-      throw new InternalServerErrorException(error);
-    });      
+    return this.appService.
+      getFlights().      
+      catch((error) => {        
+        throw new InternalServerErrorException(error);
+      });      
   }
 }

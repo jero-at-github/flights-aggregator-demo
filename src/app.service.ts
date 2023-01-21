@@ -33,7 +33,14 @@ export class AppService {
     return new Promise((resolve, reject) => {     
       forkJoin(requests).
       subscribe({
-        next: requestResponse => { resolve(requestResponse) }, 
+        next: requestResponse => { 
+          // if all requests fail return an error
+          if (requestResponse.every(response => response === null)) {
+            reject("No flight source available");
+          } else {
+            resolve(requestResponse);
+          }          
+        }, 
         error: (error) => reject(error),
       })             
     });                
