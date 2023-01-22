@@ -6,7 +6,7 @@ import { Cache } from 'cache-manager';
 export class AppController {
 
   private readonly logger = new Logger(AppService.name);
-  public cacheEnabled: boolean = false; //TODO: set to true before shipping
+  public cacheEnabled: boolean = true; //TODO: set to true before shipping
   private ttlCache: number = 1000 * 60 * 60; // 1 hour caching time  
   private keyCache: string = 'flights';
 

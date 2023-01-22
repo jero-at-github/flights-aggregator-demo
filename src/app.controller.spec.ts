@@ -21,10 +21,12 @@ describe('AppController', () => {
   describe('root', () => {
     it('should return the flights or an expected error', async () => {
       
-      appController.cacheEnabled = false;
       let response: Flight[];
 
-      // since we can get a combination of succes and error requests,
+      // disable cache
+      appController.cacheEnabled = false;      
+
+      // since we can get a combination of succes and error possible responses,
       // we try couple of times to get the chance to test the different cases
       for (let i: number = 0; i < 10; i ++) {        
         let timerStart: Date;
@@ -35,18 +37,26 @@ describe('AppController', () => {
           response = await appController.getFlights();
           timerEnd = new Date();
           
-          expect(response.length).toBeGreaterThanOrEqual(5);          
-          expect(Math.abs(timerEnd.getTime() - timerStart.getTime()) < 1000).toBeTruthy();
+          // check that at least we have 5 items          
+          expect(response.length).toBeGreaterThanOrEqual(5);  
+          // check that the response time is the exepcted one
+          let executionTime = Math.abs(timerEnd.getTime() - timerStart.getTime());    
+          expect(executionTime < 1000).toBeTruthy(); 
         } 
-        catch(error) {
-          // if the request response is later than 1 second we exepect an error
+        catch(error) {          
           timerEnd = new Date();
-          expect(Math.abs(timerEnd.getTime() - timerStart.getTime()) >= 1000).toBeTruthy();
+          
           expect(error['status']).toBe(500);
           expect(
             error['message'] === 'No flight sources available at the moment' ||
             error['message'] === 'Time limit exceeded'
           ).toBeTruthy();          
+
+          // if it is a "TIme limit exceeded" error we check the time execution
+          if (error['message'] === 'Time limit exceeded') {
+            let executionTime = Math.abs(timerEnd.getTime() - timerStart.getTime());              
+            expect(executionTime >= 1000).toBeTruthy();
+          }
         }                        
       }
     });

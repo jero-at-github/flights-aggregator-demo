@@ -16,21 +16,43 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', async () => {    
-    let timerStart: Date = new Date();
-    let response = await request(app.getHttpServer()).get('/flights');
-    let timerEnd: Date = new Date();
+    const maxIterations: number = 10;
+    let iteration: number = 0;
 
-    // if the request response is later than 1 second we exepect an error
-    if (Math.abs(timerEnd.getTime() - timerStart.getTime()) >= 1000) {        
-      expect(response.status == 500);        
-      expect(
-        response.body['message'] === 'No flight sources available at the moment' ||
-        response.body['message'] === 'Time limit exceeded'
-      ).toBeTruthy();
-    } else {
-      // if succeded, we expect at least the data of one of the requests (5)
-      expect(response.status == 200);
-      expect(response.body.length).toBeGreaterThanOrEqual(5);
-    }              
+    // since we can get a combination of succes and error possible responses,
+    // we try couple of times to get the chance to test the different cases
+    while (iteration < maxIterations) {          
+      let timerStart: Date = new Date();
+      let response = await request(app.getHttpServer()).get('/flights');
+      let timerEnd: Date = new Date();
+
+      // if the request response is later than 1 second we exepect an error
+      let executionTime = Math.abs(timerEnd.getTime() - timerStart.getTime());    
+      if (response.status == 500) {              
+        expect(
+          response.body['message'] === 'No flight sources available at the moment' ||
+          response.body['message'] === 'Time limit exceeded'
+        ).toBeTruthy();
+
+        // if it is a "TIme limit exceeded" error we check the time execution
+        if (response.body['message'] === 'Time limit exceeded') {             
+          expect(executionTime >= 1000).toBeTruthy();
+        }
+      } else {
+        // if succeded, we expect at least the data of one of the requests (5)
+        expect(response.status == 200);
+        expect(response.body.length).toBeGreaterThanOrEqual(5);
+        expect(executionTime < 1000).toBeTruthy();
+      }         
+      
+      // if the request was successfully, the cache system should return the same response the second time
+      if (response.status == 200) {
+        let response2 = await request(app.getHttpServer()).get('/flights');      
+        expect(response.status === response2.status).toBeTruthy();   
+        expect(response.body.length == response2.body.length).toBeTruthy();
+      } 
+      
+      iteration ++;
+    }    
   });
 });
