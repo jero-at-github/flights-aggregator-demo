@@ -15,7 +15,7 @@ export class AppController {
     @Inject(CACHE_MANAGER) private cacheManager: Cache, 
   ) {}
               
-  @Get()    
+  @Get('flights')    
   async getFlights(): Promise<any> {        
     
     try {       
