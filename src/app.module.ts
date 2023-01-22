@@ -6,9 +6,7 @@ import { AppService } from './app.service';
 @Module({
   imports: [
     HttpModule, 
-    CacheModule.register({
-      ttl: 10000,
-    }),
+    CacheModule.register(),
   ],
   controllers: [AppController],
   providers: [AppService],
