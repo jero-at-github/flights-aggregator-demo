@@ -64,6 +64,17 @@ export class AppService {
     return data.filter(response => response !== null);
   }
 
+  private processResponse(responseData: Flights[]): any[] {    
+    let processedData: any[] = [];
+            
+    processedData = this.removeNulls(responseData);
+    processedData = this.mergeResponses(processedData);
+    processedData = this.addIdentifiers(processedData);
+    processedData = this.removeDuplicates(processedData);  
+
+    return processedData;
+  }
+
   /**
    * Fetch all the flights from the different sources and process the data   
    * @returns The list of flights to be consumed.
@@ -99,16 +110,8 @@ export class AppService {
           // if all requests fail return an error
           if (responseData.every(response => response === null)) {
             reject(new Error("No flight sources available at the moment"));          
-          } else { 
-            // process response data
-            let processedData: any[] = [];
-            
-            processedData = this.removeNulls(responseData);
-            processedData = this.mergeResponses(processedData);
-            processedData = this.addIdentifiers(processedData);
-            processedData = this.removeDuplicates(processedData);  
-
-            resolve(processedData);
+          } else {             
+            resolve(this.processResponse(responseData));
           }          
         }, 
         error: (error) => reject(error),
