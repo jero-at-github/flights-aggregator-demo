@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Flight } from './flights/flights.interface';
+import { Flight, Flights } from './flights/flights.interface';
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/common';
 
@@ -23,7 +23,7 @@ describe('AppController', () => {
       const maxIterations: number = 20;
       let iteration: number = 0;
 
-      let response: Flight[];
+      let response: Flights;
 
       // disable cache
       appController.useCache(false);
@@ -41,7 +41,7 @@ describe('AppController', () => {
           expect(executionTime).toBeLessThanOrEqual(1000);          
 
           // check that at least we have 5 items          
-          expect(response.length).toBeGreaterThanOrEqual(5);                                
+          expect(response.flights.length).toBeGreaterThanOrEqual(5);                                
         } 
         catch(error) {
           // the only possible expected error happens when no source retrieves any data

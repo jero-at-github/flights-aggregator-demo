@@ -1,5 +1,6 @@
 import { Controller, Get, InternalServerErrorException, Logger } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Flights } from './flights/flights.interface';
 
 @Controller()
 export class AppController {
@@ -15,11 +16,11 @@ export class AppController {
   }
 
   @Get('flights')    
-  async getFlights(): Promise<any> {            
+  async getFlights(): Promise<Flights> {            
     try {                   
       this.logger.log("Flights requested");      
       let response = await this.appService.getFlights();                 
-      this.logger.debug(`Response contains ${response.length} flights`);
+      this.logger.debug(`Response contains ${response.flights.length} flights`);
       
       return response;                                           
     }

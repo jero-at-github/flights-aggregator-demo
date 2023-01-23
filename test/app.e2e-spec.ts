@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import * as _ from 'lodash';
+import { Flights } from 'src/flights/flights.interface';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -32,7 +33,7 @@ describe('AppController (e2e)', () => {
       } else {
         // if succeded, we expect at least the data of one of the requests (5)
         expect(response.status == 200);
-        expect(response.body.length).toBeGreaterThanOrEqual(5);        
+        expect(response.body.flights.length).toBeGreaterThanOrEqual(5);        
       }         
                  
       iteration ++;

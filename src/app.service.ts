@@ -29,7 +29,7 @@ export class AppService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) { }
 
-  async createRequest(sourceUrl) {
+  async createRequest(sourceUrl): Promise<Observable<Flights>> {
     
     // returns the cached response if available
     if (this.cacheEnabled) {
@@ -64,7 +64,7 @@ export class AppService {
    * Fetch all the flights from the different sources and process the data   
    * @returns The list of flights to be consumed.
    */
-  async getFlights(): Promise<any> {
+  async getFlights(): Promise<Flights> {
                     
     // creates and array with all the requests and a time limit observables    
     let requests: Observable<Flights>[] = await Promise.all(
