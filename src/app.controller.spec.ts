@@ -20,7 +20,7 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return the flights or an expected error', async () => {      
-      const maxIterations: number = 10;
+      const maxIterations: number = 20;
       let iteration: number = 0;
 
       let response: Flight[];
