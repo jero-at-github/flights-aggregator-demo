@@ -16,12 +16,12 @@ export class AppService {
   private ttlCache: number = 1000 * 5; // 1 hour caching time    
   
   // Time limit for fetching all the flight sources
-  private requestTimeLimit: number = 1000;
+  private requestTimeLimit: number = 900;
 
   // Array for storing the flight sources URLS, add more in case of need
   private flightSources: string[] = [
     'https://coding-challenge.powerus.de/flight/source1', 
-    'https://coding-challenge.powerus.de/flight/source2'
+    'https://coding-challenge.powerus.de/flight/source2'    
   ];
 
   constructor(

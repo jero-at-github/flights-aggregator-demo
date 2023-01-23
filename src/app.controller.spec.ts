@@ -26,9 +26,9 @@ describe('AppController', () => {
       // disable cache
       appController.useCache(false);
 
-      // since we can get a combination of succes and error possible responses,
+      // since we can get a combination of possible succes and error responses,
       // we try couple of times to get the chance to test the different cases
-      for (let i: number = 0; i < 10; i ++) {        
+      for (let i: number = 0; i < 20; i ++) {        
                 
         try {
           let timerStart: Date = new Date();

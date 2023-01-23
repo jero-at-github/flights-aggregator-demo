@@ -19,7 +19,7 @@ describe('AppController (e2e)', () => {
     const maxIterations: number = 10;
     let iteration: number = 0;
 
-    // since we can get a combination of succes and error possible responses,
+    // since we can get a combination of possible succes and error responses,
     // we try couple of times to get the chance to test the different cases
     while (iteration < maxIterations) {          
       let timerStart: Date = new Date();
