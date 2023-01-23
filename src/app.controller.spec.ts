@@ -18,8 +18,8 @@ describe('AppController', () => {
     appController = app.get<AppController>(AppController);    
   });
 
-  describe('root', () => {
-    it('should return the flights or an expected error', async () => {      
+  describe('Flights', () => {
+    it('should return the flights or an expected error in less than 1 second each request', async () => {      
       const maxIterations: number = 20;
       let iteration: number = 0;
 
