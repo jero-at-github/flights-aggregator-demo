@@ -7,7 +7,6 @@ import { CacheModule } from '@nestjs/common';
 
 describe('AppController', () => {
   let appController: AppController;
-  let appService: AppService;
 
   beforeEach(async () => {  
     const app: TestingModule = await Test.createTestingModule({
@@ -37,14 +36,13 @@ describe('AppController', () => {
           let timerEnd: Date = new Date();
           
           // check that the response time is not longer than 1 second
-          let executionTime = Math.abs(timerEnd.getTime() - timerStart.getTime());             
+          let executionTime = Math.abs(timerEnd.getTime() - timerStart.getTime());
           expect(executionTime <= 1000).toBeTruthy();           
 
           // check that at least we have 5 items          
           expect(response.length).toBeGreaterThanOrEqual(5);                                
         } 
-        catch(error) {                              
-          console.log(error);
+        catch(error) {
           // the only possible expected error happens when no source retrieves any data
           expect(error['status']).toBe(500);
           expect(error['message'] === 'No flight sources available at the moment').toBeTruthy();                    
