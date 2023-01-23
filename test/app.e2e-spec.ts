@@ -24,25 +24,19 @@ describe('AppController (e2e)', () => {
     while (iteration < maxIterations) {          
       let timerStart: Date = new Date();
       let response = await request(app.getHttpServer()).get('/flights');
-      let timerEnd: Date = new Date();
-
-      // if the request response is later than 1 second we exepect an error
+      let timerEnd: Date = new Date();      
+      
       let executionTime = Math.abs(timerEnd.getTime() - timerStart.getTime());    
+      
       if (response.status == 500) {              
         expect(
-          response.body['message'] === 'No flight sources available at the moment' ||
-          response.body['message'] === 'Time limit exceeded'
-        ).toBeTruthy();
-
-        // if it is a "TIme limit exceeded" error we check the time execution
-        if (response.body['message'] === 'Time limit exceeded') {             
-          expect(executionTime >= 1000).toBeTruthy();
-        }
+          response.body['message'] === 'No flight sources available at the moment'
+        ).toBeTruthy();                      
       } else {
         // if succeded, we expect at least the data of one of the requests (5)
         expect(response.status == 200);
         expect(response.body.length).toBeGreaterThanOrEqual(5);
-        expect(executionTime < 1000).toBeTruthy();
+        expect(executionTime <= 1000).toBeTruthy();
       }         
       
       // if the request was successfully, the cache system should return the same response the second time
