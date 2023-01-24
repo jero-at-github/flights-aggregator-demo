@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService, ttlCache } from './app.service';
-import { Flights } from './models/flights.interface';
+import { Flights } from './models/flights.classes';
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/common';
 import { NO_RESPONSE_DATA_MSG } from './helpers/error-messages';

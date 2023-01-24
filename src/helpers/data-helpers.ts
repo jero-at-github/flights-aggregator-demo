@@ -1,6 +1,6 @@
 import { isSameDay } from "date-fns";
 import { Filters } from "src/app.controller";
-import { Flights, Slice } from "src/models/flights.interface";
+import { Flights, Slice } from "src/models/flights.classes";
 
 export class DataHelper {
     

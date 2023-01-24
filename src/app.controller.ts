@@ -1,7 +1,7 @@
 import { Controller, Get, InternalServerErrorException, Logger, Query } from '@nestjs/common';
 import { ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AppService } from './app.service';
-import { Flights } from './models/flights.interface';
+import { Flights } from './models/flights.classes';
 
 export type Filters = {
   departureDate?: string,

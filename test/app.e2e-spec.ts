@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { Flights } from 'src/models/flights.interface';
+import { Flights } from 'src/models/flights.classes';
 import { isSameDay } from 'date-fns';
 
 describe('AppController (e2e)', () => {

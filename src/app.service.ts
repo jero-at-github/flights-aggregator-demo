@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, CACHE_MANAGER, Inject } from '@nestjs/common';
 import { catchError, map, forkJoin, of, Observable, retry, timeout } from 'rxjs';
 import { AxiosError } from 'axios';
-import { Flights } from './models/flights.interface';
+import { Flights } from './models/flights.classes';
 import { Cache } from 'cache-manager';
 import { DataHelper } from './helpers/data-helpers';
 import { NO_RESPONSE_DATA_MSG } from './helpers/error-messages';
