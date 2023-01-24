@@ -47,7 +47,7 @@ export class DataHelper {
 
     return data;
   } 
-
+  
   public static filterResponse(processedResponse: Flights, filters: Filters): Flights {    
     if (filters.departureDate) {
       processedResponse.flights = processedResponse.flights.filter(
@@ -77,7 +77,7 @@ export class DataHelper {
     if (filters.destination) {
       processedResponse.flights = processedResponse.flights.filter(
         flight => { 
-          let string1: string = flight.slices[1].origin_name.toLocaleLowerCase().trim();
+          let string1: string = flight.slices[0].destination_name.toLocaleLowerCase().trim();
           let string2: string = filters.destination.toLocaleLowerCase().trim();
           return string1.includes(string2);
         }        
