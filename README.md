@@ -20,6 +20,17 @@ The most important dependencies used in the project are:
 - **performance**: for http requests time response measurement
 - **date-fns**: to compare dates
 - **cache-manager**: for http requests responses caching
-- **nestjs/swagger**: for swager documentation
+- **nestjs/swagger, swagger-ui-express**: for swager documentation
 
-##### 
+#### Comments
+- The endpoint will try to fetch data from the data sources in less than 1 second.
+If one of the sources fails, it will retry until the 1 second time limit triggers, in that case the endpoint will return the data of the sources which loaded sucessfully.
+In case all sources failed it will return an exception with the message: No flight sources available at the moment
+- The endpoint uses caching per request for 1 hour. 
+- Since the endpoint would be consumed by a search flights application, it implements some basic filters:
+    - By maxPrice
+    - By departure date (day)
+    - By return date (day)
+    - By origin
+    - By destination
+Example: http://localhost:3000/flights?maxPrice=150&origin=Schon&destination=Stansted&departureDate=2019-08-08T04:30:00.000Z&returnDate=2019-08-10T06:25:00.000Z
