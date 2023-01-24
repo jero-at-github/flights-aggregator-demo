@@ -1,18 +1,30 @@
-export interface Slice {
-    id?: string,
-    origin_name: string,
-    destination_name: string,
-    departure_date_time_utc: Date,
-    arrival_date_time_utc: Date,
-    flight_number: string,
-    duration: number
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
+
+export class Slice {
+    @ApiPropertyOptional({ type: String })
+    id?: string;
+    @ApiProperty({ type: String })
+    origin_name: string;
+    @ApiProperty({ type: String })
+    destination_name: string;
+    @ApiProperty({ type: String, format: 'date-time' })
+    departure_date_time_utc: Date;
+    @ApiProperty({ type: String, format: 'date-time' })
+    arrival_date_time_utc: Date;
+    @ApiProperty({ type: String })
+    flight_number: string;
+    @ApiPropertyOptional({ type: Number })
+    duration: number;
 }
 
-export interface Flight {
-    slices: Slice[],
-    price: number
+export class Flight {    
+    @ApiProperty({ type: Slice, isArray: true })
+    slices: Slice[];
+    @ApiProperty({ type: Number })
+    price: number;
 }
 
-export interface Flights {
-    flights : Flight[]    
+export class Flights {
+    @ApiProperty({ type: Flight, isArray: true })
+    flights : Flight[];
 }

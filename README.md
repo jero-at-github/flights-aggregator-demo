@@ -6,7 +6,8 @@ To start the REST API:
 `npm install` 
 `npm run start`
 
-The server will provide the endpoint in the URL: `http://localhost:3000/flights`
+- The server will provide the endpoint in the URL: http://localhost:3000/flights
+- The Swagger API documentation can be found here: http://localhost:3000/api
 
 #### Testing
 There are included 2 test sets:
@@ -19,5 +20,6 @@ The most important dependencies used in the project are:
 - **performance**: for http requests time response measurement
 - **date-fns**: to compare dates
 - **cache-manager**: for http requests responses caching
+- **nestjs/swagger**: for swager documentation
 
-##### g
+##### 
