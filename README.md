@@ -33,4 +33,4 @@ In case all sources failed it will return an exception with the message: No flig
     - By return date (day)
     - By origin
     - By destination
-Example: http://localhost:3000/flights?maxPrice=150&origin=Schon&destination=Stansted&departureDate=2019-08-08T04:30:00.000Z&returnDate=2019-08-10T06:25:00.000Z
+    - Example: http://localhost:3000/flights?maxPrice=150&origin=Schon&destination=Stansted&departureDate=2019-08-08T04:30:00.000Z&returnDate=2019-08-10T06:25:00.000Z
