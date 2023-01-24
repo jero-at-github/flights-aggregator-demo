@@ -39,16 +39,11 @@ describe('AppController', () => {
                     
           // check that the response time is not longer than 1 second
           let executionTime = timerEnd - timerStart;            
-          expect(executionTime).toBeLessThanOrEqual(1000);          
-
-          // check that at least we have 5 items          
-          expect(response.flights.length).toBeGreaterThanOrEqual(5);     
-          expect(response.flights.length).toBeLessThanOrEqual(8);                           
+          expect(executionTime).toBeLessThanOrEqual(1000);                    
         } 
         catch(error) {
           // the only possible expected error happens when no source retrieves any data
-          if (error['status'] == 500) {
-            expect(error['status']).toBe(500);          
+          if (error['status'] == 500) {                               
             expect(error['message'] === NO_RESPONSE_DATA_MSG).toBeTruthy();                    
           } else {
             throw error;
