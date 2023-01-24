@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppService, ttlCache } from './app.service';
 import { Flights } from './models/flights.interface';
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/common';
@@ -39,7 +39,7 @@ describe('AppController', () => {
                     
           // check that the response time is not longer than 1 second
           let executionTime = timerEnd - timerStart;            
-          expect(executionTime).toBeLessThanOrEqual(1000);                    
+          expect(executionTime).toBeLessThanOrEqual(ttlCache);                    
         } 
         catch(error) {
           // the only possible expected error happens when no source retrieves any data

@@ -14,13 +14,14 @@ interface FlightsResponse {
   isCached: boolean;
 }
 
+export const ttlCache: number = 1000 * 60 * 60; // 1 hour caching time      
+
 @Injectable()
 export class AppService {
   
   private readonly logger = new Logger(AppService.name);  
   
-  public cacheEnabled: boolean = true;
-  private ttlCache: number = 1000 * 60 * 60; // 1 hour caching time      
+  public cacheEnabled: boolean = true;  
   
   // Time limit for fetching all the flight sources
   private requestTimeLimit: number = 900;
@@ -82,7 +83,7 @@ export class AppService {
     await Promise.all(
       responsesToCache.map(response=> {
         this.logger.debug(`Caching response for ${response.sourceUrl}.`);
-        return this.cacheManager.set(response.sourceUrl, response.data, this.ttlCache);
+        return this.cacheManager.set(response.sourceUrl, response.data, ttlCache);
       })
     );           
   }
