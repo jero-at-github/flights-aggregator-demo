@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Flights } from './flights/flights.interface';
+import { Flights } from './models/flights.interface';
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/common';
 import { NO_RESPONSE_DATA_MSG } from './helpers/error-messages';
@@ -34,7 +34,7 @@ describe('AppController', () => {
       while (iteration < maxIterations) {                     
         try {
           let timerStart: number = performance.now();
-          response = await appController.getFlights();
+          response = await appController.getFlights(null, null, null, null, null);
           let timerEnd: number = performance.now();
                     
           // check that the response time is not longer than 1 second

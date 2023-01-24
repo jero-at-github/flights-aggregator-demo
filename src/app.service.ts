@@ -2,10 +2,12 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, CACHE_MANAGER, Inject } from '@nestjs/common';
 import { catchError, map, forkJoin, of, Observable, retry, timeout } from 'rxjs';
 import { AxiosError } from 'axios';
-import {  Flights } from './flights/flights.interface';
+import { Flights } from './models/flights.interface';
 import { Cache } from 'cache-manager';
 import { DataHelper } from './helpers/data-helpers';
 import { NO_RESPONSE_DATA_MSG } from './helpers/error-messages';
+import { Filters } from './app.controller';
+import { isSameDay } from 'date-fns';
 
 interface FlightsResponse {
   sourceUrl: string;
@@ -76,11 +78,57 @@ export class AppService {
       );          
   }
 
+  private async cacheResponses(flightsResponse: FlightsResponse[]) {      
+    let responsesToCache = flightsResponse.filter(response => !response.isCached);
+    await Promise.all(
+      responsesToCache.map(response=> {
+        this.logger.debug(`Caching response for ${response.sourceUrl}.`);
+        return this.cacheManager.set(response.sourceUrl, response.data, this.ttlCache);
+      })
+    );           
+  }
+
+  private filterResponse(processedResponse: Flights, filters: Filters): Flights {    
+    if (filters.departureDate) {
+      processedResponse.flights = processedResponse.flights.filter(
+        flight => isSameDay(
+          new Date(flight.slices[0].departure_date_time_utc), 
+          new Date(filters.departureDate)
+        )                     
+      );
+    }
+    if (filters.returnDate) {
+      processedResponse.flights = processedResponse.flights.filter(
+        flight => isSameDay(
+          new Date(flight.slices[1].departure_date_time_utc), 
+          new Date(filters.returnDate)
+        )        
+      );
+    }
+    if (filters.origin) {
+      processedResponse.flights = processedResponse.flights.filter(
+        flight => flight.slices[0].origin_name.toLocaleLowerCase().trim().includes(filters.origin.toLocaleLowerCase().trim())
+      );
+    }
+    if (filters.destination) {
+      processedResponse.flights = processedResponse.flights.filter(
+        flight => flight.slices[1].origin_name.toLocaleLowerCase().trim().includes(filters.destination.toLocaleLowerCase().trim())
+      );
+    }
+    if (filters.maxPrice) {
+      processedResponse.flights = processedResponse.flights.filter(
+        flight => flight.price <= filters.maxPrice
+      );
+    }  
+    
+    return processedResponse;
+  }
+
   /**
    * Fetch all the flights from the different sources, uses cache if applicable and process the data .  
    * @returns The list of flights to be consumed.
    */
-  async getFlights(): Promise<Flights> {
+  async getFlights(filters: Filters): Promise<Flights> {
                     
     // creates and array with all the source observables
     let sources$: Observable<FlightsResponse>[] = await Promise.all(
@@ -92,27 +140,28 @@ export class AppService {
       forkJoin(sources$).
       subscribe({
         next: async flightsResponse => {           
-          // if none request returns data, throw an error
+          // clean response of nulls (requests which didn't return any data because error)
           flightsResponse = flightsResponse.filter(response => response !== null);
+
+          // if none request returns data, throw an error          
           if (flightsResponse.length == 0) {
             reject(new Error(NO_RESPONSE_DATA_MSG));          
           } else {                 
             // cache response data 
             if (this.cacheEnabled) {
-              let responsesToCache = flightsResponse.filter(response => !response.isCached);
-              await Promise.all(
-                responsesToCache.map(response=> {
-                  this.logger.debug(`Caching response for ${response.sourceUrl}.`);
-                  return this.cacheManager.set(response.sourceUrl, response.data, this.ttlCache);
-                })
-              );                                          
-            }          
-            
-            resolve(
-              DataHelper.processResponse(
-                flightsResponse.map(response => response.data)
-              )
+              await this.cacheResponses(flightsResponse);
+            }
+
+            // Merge, add identifiers and remove duplicates
+            let processedResponse: Flights = DataHelper.processResponse(
+              flightsResponse.map(response => response.data)
             );
+
+            // Filter
+            processedResponse = this.filterResponse(processedResponse, filters);
+            
+            // resolve
+            resolve(processedResponse);
           }          
         }, 
         error: (error) => reject(error),
