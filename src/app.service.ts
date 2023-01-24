@@ -14,7 +14,7 @@ interface FlightsResponse {
   isCached: boolean;
 }
 
-export const ttlCache: number = 1000 * 60 * 60; // 1 hour caching time      
+export const ttlCache: number = 5000; // 1 hour caching time      
 
 @Injectable()
 export class AppService {
@@ -79,6 +79,10 @@ export class AppService {
       );          
   }
 
+  /**
+   * Cache responses from the data sources
+   * @param flightsResponse 
+   */
   private async cacheResponses(flightsResponse: FlightsResponse[]) {      
     let responsesToCache = flightsResponse.filter(response => !response.isCached);
     await Promise.all(
