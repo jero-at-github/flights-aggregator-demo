@@ -20,8 +20,7 @@ export class AppController {
     try {                   
       this.logger.log("Flights requested");      
       let response = await this.appService.getFlights();                 
-      this.logger.debug(`Response contains ${response.flights.length} flights`);
-      
+      this.logger.debug(`Response contains ${response.flights.length} flights`);      
       return response;                                           
     }
     catch(error) {
