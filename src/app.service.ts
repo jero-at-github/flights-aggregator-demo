@@ -7,7 +7,6 @@ import { Cache } from 'cache-manager';
 import { DataHelper } from './helpers/data-helpers';
 import { NO_RESPONSE_DATA_MSG } from './helpers/error-messages';
 import { Filters } from './app.controller';
-import { isSameDay } from 'date-fns';
 
 interface FlightsResponse {
   sourceUrl: string;
