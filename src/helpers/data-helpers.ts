@@ -1,4 +1,4 @@
-import { Flight, Flights, Slice } from "src/flights/flights.interface";
+import { Flights, Slice } from "src/flights/flights.interface";
 
 export class DataHelper {
     

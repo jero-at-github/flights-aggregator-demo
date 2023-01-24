@@ -3,7 +3,6 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import * as _ from 'lodash';
-import { Flights } from 'src/flights/flights.interface';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;

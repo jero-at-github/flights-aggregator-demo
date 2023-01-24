@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Flight, Flights } from './flights/flights.interface';
+import { Flights } from './flights/flights.interface';
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/common';
 
