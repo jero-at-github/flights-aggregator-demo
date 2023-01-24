@@ -24,7 +24,7 @@ The most important dependencies used in the project are:
 
 #### Comments
 - The endpoint will try to fetch data from the data sources in less than 1 second.
-If one of the sources fails, it will retry until the 1 second time limit triggers, in that case the endpoint will return the data of the sources which loaded sucessfully.
+If any of the sources fails, it will retry until the 1 second time limit triggers, in that case the endpoint will return the data of the sources which loaded sucessfully.
 In case all sources failed it will return an exception with the message: No flight sources available at the moment
 - The endpoint uses caching per request for 1 hour. 
 - Since the endpoint would be consumed by a search flights application, it implements some basic filters:
