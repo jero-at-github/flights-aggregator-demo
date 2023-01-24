@@ -17,9 +17,8 @@ export class AppService {
   
   private readonly logger = new Logger(AppService.name);  
   
-  public cacheEnabled: boolean = true; //TODO: set to true before shipping
-  // private ttlCache: number = 1000 * 60 * 60; // 1 hour caching time    
-  private ttlCache: number = 1000 * 5; // 1 hour caching time    
+  public cacheEnabled: boolean = true;
+  private ttlCache: number = 1000 * 60 * 60; // 1 hour caching time      
   
   // Time limit for fetching all the flight sources
   private requestTimeLimit: number = 900;

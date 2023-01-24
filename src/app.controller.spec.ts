@@ -25,7 +25,7 @@ describe('AppController', () => {
 
       let response: Flights;
 
-      // disable cache
+      // disable cache to test time response
       appController.useCache(false);
 
       // since we can get a combination of possible succes and error responses,
