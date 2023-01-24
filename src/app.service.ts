@@ -5,6 +5,7 @@ import { AxiosError } from 'axios';
 import {  Flights } from './flights/flights.interface';
 import { Cache } from 'cache-manager';
 import { DataHelper } from './helpers/data-helpers';
+import { NO_RESPONSE_DATA_MSG } from './helpers/error-messages';
 
 interface FlightsResponse {
   sourceUrl: string;
@@ -82,19 +83,19 @@ export class AppService {
   async getFlights(): Promise<Flights> {
                     
     // creates and array with all the source observables
-    let requests: Observable<FlightsResponse>[] = await Promise.all(
+    let sources$: Observable<FlightsResponse>[] = await Promise.all(
       this.flightSources.map(source => this.createSourceObs(source))
     );    
 
     // fetch data and process it
     return new Promise((resolve, reject) => {           
-      forkJoin(requests).
+      forkJoin(sources$).
       subscribe({
-        next: async flightsResponse => { 
+        next: async flightsResponse => {           
           // if none request returns data, throw an error
           flightsResponse = flightsResponse.filter(response => response !== null);
           if (flightsResponse.length == 0) {
-            reject(new Error("No flight sources available at the moment"));          
+            reject(new Error(NO_RESPONSE_DATA_MSG));          
           } else {                 
             // cache response data 
             if (this.cacheEnabled) {

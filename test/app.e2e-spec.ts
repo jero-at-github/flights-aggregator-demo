@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import * as _ from 'lodash';
+import { NO_RESPONSE_DATA_MSG } from 'src/helpers/error-messages';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -32,7 +33,7 @@ describe('AppController (e2e)', () => {
       }
       else if (response.status == 500) {              
         expect(
-          response.body['message'] === 'No flight sources available at the moment'
+          response.body['message'] === NO_RESPONSE_DATA_MSG
         ).toBeTruthy();                      
       }        
                  

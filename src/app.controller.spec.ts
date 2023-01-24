@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { Flights } from './flights/flights.interface';
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/common';
+import { NO_RESPONSE_DATA_MSG } from './helpers/error-messages';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -48,7 +49,7 @@ describe('AppController', () => {
           // the only possible expected error happens when no source retrieves any data
           if (error['status'] == 500) {
             expect(error['status']).toBe(500);          
-            expect(error['message'] === 'No flight sources available at the moment').toBeTruthy();                    
+            expect(error['message'] === NO_RESPONSE_DATA_MSG).toBeTruthy();                    
           } else {
             throw error;
           }

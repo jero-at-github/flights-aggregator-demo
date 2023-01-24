@@ -1,0 +1,1 @@
+export const NO_RESPONSE_DATA_MSG: string = "No flight sources available at the moment";
