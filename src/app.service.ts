@@ -23,7 +23,8 @@ export class AppService {
   
   public cacheEnabled: boolean = true;  
   
-  // Time limit for fetching all the flight sources
+  // Time limit for fetching all the flight sources,
+  // a bit less than 1 second since the endpoint logic itself consumes some additional milliseconds
   private requestTimeLimit: number = 900;
 
   // Array for storing the flight sources URLS, add more in case of need
