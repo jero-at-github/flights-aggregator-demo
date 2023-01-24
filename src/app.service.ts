@@ -87,43 +87,7 @@ export class AppService {
       })
     );           
   }
-
-  private filterResponse(processedResponse: Flights, filters: Filters): Flights {    
-    if (filters.departureDate) {
-      processedResponse.flights = processedResponse.flights.filter(
-        flight => isSameDay(
-          new Date(flight.slices[0].departure_date_time_utc), 
-          new Date(filters.departureDate)
-        )                     
-      );
-    }
-    if (filters.returnDate) {
-      processedResponse.flights = processedResponse.flights.filter(
-        flight => isSameDay(
-          new Date(flight.slices[1].departure_date_time_utc), 
-          new Date(filters.returnDate)
-        )        
-      );
-    }
-    if (filters.origin) {
-      processedResponse.flights = processedResponse.flights.filter(
-        flight => flight.slices[0].origin_name.toLocaleLowerCase().trim().includes(filters.origin.toLocaleLowerCase().trim())
-      );
-    }
-    if (filters.destination) {
-      processedResponse.flights = processedResponse.flights.filter(
-        flight => flight.slices[1].origin_name.toLocaleLowerCase().trim().includes(filters.destination.toLocaleLowerCase().trim())
-      );
-    }
-    if (filters.maxPrice) {
-      processedResponse.flights = processedResponse.flights.filter(
-        flight => flight.price <= filters.maxPrice
-      );
-    }  
-    
-    return processedResponse;
-  }
-
+  
   /**
    * Fetch all the flights from the different sources, uses cache if applicable and process the data .  
    * @returns The list of flights to be consumed.
@@ -158,7 +122,7 @@ export class AppService {
             );
 
             // Filter
-            processedResponse = this.filterResponse(processedResponse, filters);
+            processedResponse = DataHelper.filterResponse(processedResponse, filters);
             
             // resolve
             resolve(processedResponse);

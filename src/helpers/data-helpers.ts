@@ -1,3 +1,5 @@
+import { isSameDay } from "date-fns";
+import { Filters } from "src/app.controller";
 import { Flights, Slice } from "src/models/flights.interface";
 
 export class DataHelper {
@@ -45,6 +47,50 @@ export class DataHelper {
 
     return data;
   } 
+
+  public static filterResponse(processedResponse: Flights, filters: Filters): Flights {    
+    if (filters.departureDate) {
+      processedResponse.flights = processedResponse.flights.filter(
+        flight => isSameDay(
+          new Date(flight.slices[0].departure_date_time_utc), 
+          new Date(filters.departureDate)
+        )                     
+      );
+    }
+    if (filters.returnDate) {
+      processedResponse.flights = processedResponse.flights.filter(
+        flight => isSameDay(
+          new Date(flight.slices[1].departure_date_time_utc), 
+          new Date(filters.returnDate)
+        )        
+      );
+    }
+    if (filters.origin) {
+      processedResponse.flights = processedResponse.flights.filter(
+        flight => { 
+          let string1: string = flight.slices[0].origin_name.toLocaleLowerCase().trim();
+          let string2: string = filters.origin.toLocaleLowerCase().trim();
+          return string1.includes(string2);
+        }
+      );
+    }
+    if (filters.destination) {
+      processedResponse.flights = processedResponse.flights.filter(
+        flight => { 
+          let string1: string = flight.slices[1].origin_name.toLocaleLowerCase().trim();
+          let string2: string = filters.destination.toLocaleLowerCase().trim();
+          return string1.includes(string2);
+        }        
+      );
+    }
+    if (filters.maxPrice) {
+      processedResponse.flights = processedResponse.flights.filter(
+        flight => flight.price <= filters.maxPrice
+      );
+    }  
+    
+    return processedResponse;
+  }
 
   public static processResponse(responseData: Flights[]): Flights {    
     let processedData: Flights = null;
