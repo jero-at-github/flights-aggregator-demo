@@ -50,37 +50,39 @@ export class DataHelper {
   
   public static filterResponse(processedResponse: Flights, filters: Filters): Flights {    
 
-    processedResponse.flights = processedResponse.flights.filter(flight => {
-      let filterResult: boolean = true;
-    
-      if (filters.departureDate) {
-        filterResult = filterResult && isSameDay(
-          new Date(flight.slices[0].departure_date_time_utc), 
-          new Date(filters.departureDate)
-        );
-      }
-      if (filters.returnDate) {
-        filterResult = filterResult && isSameDay(
-          new Date(flight.slices[1].departure_date_time_utc), 
-          new Date(filters.returnDate)
-        );
-      }
-      if (filters.origin) {        
-        let string1: string = flight.slices[0].origin_name.toLocaleLowerCase().trim();
-        let string2: string = filters.origin.toLocaleLowerCase().trim();
-        filterResult = filterResult && string1.includes(string2);
-      }
-      if (filters.destination) {                
-        let string1: string = flight.slices[0].destination_name.toLocaleLowerCase().trim();
-        let string2: string = filters.destination.toLocaleLowerCase().trim();
-        filterResult = filterResult && string1.includes(string2);                        
-      }
-      if (filters.maxPrice) {        
-        filterResult = filterResult && flight.price <= filters.maxPrice;
-      }
+    if (Object.keys(filters).length !== 0) {    
+      processedResponse.flights = processedResponse.flights.filter(flight => {
+        let filterResult: boolean = true;
+      
+        if (filters.departureDate) {
+          filterResult = filterResult && isSameDay(
+            new Date(flight.slices[0].departure_date_time_utc), 
+            new Date(filters.departureDate)
+          );
+        }
+        if (filters.returnDate) {
+          filterResult = filterResult && isSameDay(
+            new Date(flight.slices[1].departure_date_time_utc), 
+            new Date(filters.returnDate)
+          );
+        }
+        if (filters.origin) {        
+          let string1: string = flight.slices[0].origin_name.toLocaleLowerCase().trim();
+          let string2: string = filters.origin.toLocaleLowerCase().trim();
+          filterResult = filterResult && string1.includes(string2);
+        }
+        if (filters.destination) {                
+          let string1: string = flight.slices[0].destination_name.toLocaleLowerCase().trim();
+          let string2: string = filters.destination.toLocaleLowerCase().trim();
+          filterResult = filterResult && string1.includes(string2);                        
+        }
+        if (filters.maxPrice) {        
+          filterResult = filterResult && flight.price <= filters.maxPrice;
+        }
 
-      return filterResult;
-    });   
+        return filterResult;
+      });   
+    }
     
     return processedResponse;
   }
