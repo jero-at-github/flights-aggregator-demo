@@ -1,4 +1,4 @@
-# powerus-coding-challenge 
+# Flights aggregator demo
 ###### By: Jeronimo Lopez
 
 #### Installation
